@@ -1,14 +1,15 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
+import './services/telegram';
+import './controllers/telegram';
 import { ApolloServer, gql } from 'apollo-server';
-
-dotenv.config();
 
 const serverPort = 4000;
 
 // graphql definitions
 const typeDefs = gql`
   type GrayscaleMessage {
-    bought: Float!
+    success: Boolean!
+    message: String
   }
 
   type Query {
@@ -16,7 +17,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    grayscale: String
+    grayscale(bought: Float!): GrayscaleMessage
   }
 `;
 
@@ -25,7 +26,9 @@ const resolvers = {
     helloWorld: () => "It's live!",
   },
   Mutation: {
-    grayscale: () => 'first',
+    grayscale: () =>
+      // bot.sendMessage()
+      ({ success: true, message: 'Ok' }),
   },
 };
 
