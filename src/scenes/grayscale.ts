@@ -3,7 +3,7 @@ import { gql } from 'graphql-request';
 import Currency from 'currency.js';
 import dayjs from 'dayjs';
 import grayscaleQuery from '../services/grayscale';
-import { Grayscale } from '../generated/grayscale';
+import { Graphql } from '../generated/grayscale/graphql';
 
 const grayscaleScene = new Scenes.BaseScene<Scenes.SceneContext>('grayscale');
 
@@ -15,6 +15,8 @@ grayscaleScene.enter((ctx) =>
 );
 
 // commands
+
+// get holdings
 grayscaleScene.hears(/holdings/i, async (ctx) => {
   const query = gql`
     query getLatest {
@@ -25,9 +27,7 @@ grayscaleScene.hears(/holdings/i, async (ctx) => {
     }
   `;
   ctx.reply('Checking the latest acquisition...');
-  const data: { getPurchase: Grayscale[] } = await grayscaleQuery.request(
-    query
-  );
+  const data: { getPurchase: Graphql[] } = await grayscaleQuery.request(query);
   ctx.reply(
     `Grayscale holds on ${dayjs(data.getPurchase[0].date).format(
       'MM/DD/YYYY'

@@ -2,6 +2,7 @@ import { GraphQLClient } from 'graphql-request';
 import * as Dom from 'graphql-request/dist/types.dom';
 import { print } from 'graphql';
 import gql from 'graphql-tag';
+
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
@@ -28,8 +29,8 @@ export type PurchaseFilter = {
   date?: Maybe<Scalars['DateTime']>;
 };
 
-export type Grayscale = {
-  __typename?: 'Grayscale';
+export type Graphql = {
+  __typename?: 'Graphql';
   id: Scalars['ID'];
   date: Scalars['DateTime'];
   shares: Scalars['Float'];
@@ -42,9 +43,9 @@ export type Grayscale = {
 
 export type Query = {
   __typename?: 'Query';
-  allPurchases: Array<Grayscale>;
-  getPurchase?: Maybe<Array<Maybe<Grayscale>>>;
-  getLatestPurchase?: Maybe<Grayscale>;
+  allPurchases: Array<Graphql>;
+  getPurchase?: Maybe<Array<Maybe<Graphql>>>;
+  getLatestPurchase?: Maybe<Graphql>;
 };
 
 export type QueryAllPurchasesArgs = {
