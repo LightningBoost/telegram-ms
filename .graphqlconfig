@@ -1,0 +1,8 @@
+{
+  "name": "Telegram-ms schema",
+  "projects": {
+    "grayscale-ms": {
+      "includes": ["src/generated/grayscale.graphql"]
+    }
+  }
+}
