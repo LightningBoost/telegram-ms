@@ -1,13 +1,25 @@
 overwrite: true
-schema: "http://localhost:4000"
+hooks:
+  afterAllFileWrite:
+    - prettier --write
 documents: null
 generates:
   src/generated/graphql.ts:
+    schema: "http://localhost:4000"
     config:
       useIndexSignature: true
     plugins:
       - "typescript"
       - "typescript-resolvers"
   ./graphql.schema.json:
+    schema: "http://localhost:4000"
     plugins:
       - "introspection"
+  src/generated/grayscale.ts:
+    schema: "http://grayscale-ms:4000"
+    config:
+      useIndexSignature: true
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-graphql-request"

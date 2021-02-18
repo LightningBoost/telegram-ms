@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: lightningboost-db
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  telegram-ms:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: telegram-ms
+    volumes:
+    - .:/app
+    ports:
+    - 4000:4000
+    - 8181:8181
+    env_file:
+      - .env
+    links:
+      - postgres
+      - grayscale-ms
+    depends_on:
+      - postgres
+    command: >
+      /bin/sh -c "npx prisma migrate dev --preview-feature &&
+      yarn run dev"
+
+  grayscale-ms:
+    build:
+      context: ../grayscale-ms
+      dockerfile: Dockerfile.dev
+    container_name: grayscale-ms
+    environment:
+      - DATABASE_URL=postgresql://postgres:admin@postgres:5432/grayscale
+      - POSTGRES_PASSWORD=admin
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    command: yarn run dev
+
+volumes:
+  postgres:
+    name: lightningboost-db

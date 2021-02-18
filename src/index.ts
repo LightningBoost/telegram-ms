@@ -1,7 +1,7 @@
 import 'dotenv/config';
-import './services/telegram';
 import './controllers/telegram';
 import { ApolloServer, gql } from 'apollo-server';
+import bot from './services/telegram';
 
 const serverPort = 4000;
 
@@ -17,7 +17,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    grayscale(bought: Float!): GrayscaleMessage
+    grayscalePurchase(bought: Float!): GrayscaleMessage
   }
 `;
 
@@ -26,12 +26,13 @@ const resolvers = {
     helloWorld: () => "It's live!",
   },
   Mutation: {
-    grayscale: () =>
+    grayscalePurchase: () =>
       // bot.sendMessage()
       ({ success: true, message: 'Ok' }),
   },
 };
 
+bot.launch();
 const server = new ApolloServer({ typeDefs, resolvers });
 
 server.listen({ port: serverPort }, () => {

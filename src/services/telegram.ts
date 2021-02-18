@@ -1,7 +1,17 @@
-import TelegramBot from 'node-telegram-bot-api';
+import { Telegraf, Scenes } from 'telegraf';
 
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_API || '', {
-  polling: true,
-});
+const token = process.env.TELEGRAM_BOT_API;
+
+if (token === undefined) {
+  throw new Error('Telegram token must be provided');
+}
+
+const bot = new Telegraf<Scenes.SceneContext>(
+  process.env.TELEGRAM_BOT_API || ''
+);
+
+if (process.env.NODE_ENV === 'development') {
+  bot.use(Telegraf.log());
+}
 
 export default bot;
