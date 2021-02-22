@@ -8,12 +8,13 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
 }
 
 model Chat {
-  id                Int         @default(autoincrement()) @id
-  type              Service[]
-  chatId            String      @unique
+  id                        Int         @default(autoincrement()) @id
+  subscription              Service[]
+  chatId                    String      @unique
 }
 
 enum Service {

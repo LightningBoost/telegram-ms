@@ -40,33 +40,59 @@ bot.command('grayscale_holdings', async (ctx) => {
   }
 });
 
-// subscribe
+// subscribe to daily updates
 bot.command('grayscale_subscribe', async (ctx) => {
-  if (ctx.chat && ctx.chat.id) {
+  if (ctx.chat) {
     const chatDb = await prisma.chat.findUnique({
       where: {
         chatId: String(ctx.chat.id),
       },
     });
     if (chatDb) {
-      if (chatDb.type.includes('GRAYSCALE')) {
+      if (chatDb.subscription.includes('GRAYSCALE')) {
         ctx.reply('You are already subscribed');
         return;
       }
       await prisma.chat.update({
         where: { chatId: String(ctx.chat.id) },
         data: {
-          type: { set: [...chatDb.type, 'GRAYSCALE'] },
+          subscription: { set: [...chatDb.subscription, 'GRAYSCALE'] },
         },
       });
     } else {
       await prisma.chat.create({
         data: {
           chatId: String(ctx.chat.id),
-          type: ['GRAYSCALE'],
+          subscription: ['GRAYSCALE'],
         },
       });
     }
     ctx.reply("Done, from now on I'll keep you updated");
+  }
+});
+
+// unsubscribe from daily updates
+bot.command('grayscale_unsubscribe', async (ctx) => {
+  if (ctx.chat) {
+    const chatDb = await prisma.chat.findUnique({
+      where: {
+        chatId: String(ctx.chat.id),
+      },
+    });
+    if (chatDb) {
+      const index = chatDb.subscription.indexOf('GRAYSCALE');
+      if (index === -1) {
+        ctx.reply('You are not subscribed to receive daily updates');
+        return;
+      }
+      chatDb.subscription.splice(index, 1);
+      await prisma.chat.update({
+        where: { chatId: String(ctx.chat.id) },
+        data: {
+          subscription: { set: chatDb.subscription },
+        },
+      });
+      ctx.reply('You will no longer receive daily updates');
+    }
   }
 });
