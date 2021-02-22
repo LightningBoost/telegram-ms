@@ -39,11 +39,14 @@ export type Query = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  grayscale?: Maybe<GrayscaleMessage>;
+  grayscalePurchase?: Maybe<GrayscaleMessage>;
 };
 
-export type MutationGrayscaleArgs = {
+export type MutationGrayscalePurchaseArgs = {
   bought: Scalars['Float'];
+  fiat: Scalars['Float'];
+  total: Scalars['Float'];
+  change: Scalars['Float'];
 };
 
 export enum CacheControlScope {
@@ -229,11 +232,14 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = ResolversObject<{
-  grayscale?: Resolver<
+  grayscalePurchase?: Resolver<
     Maybe<ResolversTypes['GrayscaleMessage']>,
     ParentType,
     ContextType,
-    RequireFields<MutationGrayscaleArgs, 'bought'>
+    RequireFields<
+      MutationGrayscalePurchaseArgs,
+      'bought' | 'fiat' | 'total' | 'change'
+    >
   >;
 }>;
 

@@ -2,6 +2,8 @@ import 'dotenv/config';
 import './controllers/telegram';
 import { ApolloServer, gql } from 'apollo-server';
 import bot from './services/telegram';
+import { sendDailyUpdate } from './controllers/grayscale';
+import { Resolvers } from './generated/telegram/graphql';
 
 const serverPort = 4000;
 
@@ -17,18 +19,24 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    grayscalePurchase(bought: Float!): GrayscaleMessage
+    grayscalePurchase(
+      bought: Float!
+      fiat: Float!
+      total: Float!
+      change: Float!
+    ): GrayscaleMessage
   }
 `;
 
-const resolvers = {
+const resolvers: Resolvers = {
   Query: {
     helloWorld: () => "It's live!",
   },
   Mutation: {
-    grayscalePurchase: () =>
-      // bot.sendMessage()
-      ({ success: true, message: 'Ok' }),
+    grayscalePurchase: async (parent, { bought, total, fiat, change }) => {
+      await sendDailyUpdate({ fiat, bought, total, change });
+      return { success: true, message: 'Updates sent' };
+    },
   },
 };
 

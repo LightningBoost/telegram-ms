@@ -1,5 +1,5 @@
 import bot from '../services/telegram';
-import '../scenes/grayscale';
+import './grayscale/commands';
 import prisma from '../database';
 
 bot.on('text', (ctx) => {
