@@ -1,23 +1,15 @@
-import { Scenes, Markup } from 'telegraf';
 import { gql } from 'graphql-request';
 import Currency from 'currency.js';
 import dayjs from 'dayjs';
+import bot from '../services/telegram';
 import grayscaleQuery from '../services/grayscale';
 import { Graphql } from '../generated/grayscale/graphql';
-
-const grayscaleScene = new Scenes.BaseScene<Scenes.SceneContext>('grayscale');
-
-grayscaleScene.enter((ctx) =>
-  ctx.reply(
-    'You can choose a set of options to view',
-    Markup.keyboard(['Holdings', 'Main menu']).resize()
-  )
-);
+import prisma from '../database';
 
 // commands
 
 // get holdings
-grayscaleScene.hears(/holdings/i, async (ctx) => {
+bot.command('grayscale_holdings', async (ctx) => {
   const query = gql`
     query getLatest {
       getPurchase(take: 2) {
@@ -48,4 +40,33 @@ grayscaleScene.hears(/holdings/i, async (ctx) => {
   }
 });
 
-export default grayscaleScene;
+// subscribe
+bot.command('grayscale_subscribe', async (ctx) => {
+  if (ctx.chat && ctx.chat.id) {
+    const chatDb = await prisma.chat.findUnique({
+      where: {
+        chatId: String(ctx.chat.id),
+      },
+    });
+    if (chatDb) {
+      if (chatDb.type.includes('GRAYSCALE')) {
+        ctx.reply('You are already subscribed');
+        return;
+      }
+      await prisma.chat.update({
+        where: { chatId: String(ctx.chat.id) },
+        data: {
+          type: { set: [...chatDb.type, 'GRAYSCALE'] },
+        },
+      });
+    } else {
+      await prisma.chat.create({
+        data: {
+          chatId: String(ctx.chat.id),
+          type: ['GRAYSCALE'],
+        },
+      });
+    }
+    ctx.reply("Done, from now on I'll keep you updated");
+  }
+});
