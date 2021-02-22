@@ -10,9 +10,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Services {
+model Chat {
   id                Int         @default(autoincrement()) @id
-  type              Service
+  type              Service[]
+  chatId            String      @unique
 }
 
 enum Service {
